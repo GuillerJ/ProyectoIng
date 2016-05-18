@@ -1,0 +1,41 @@
+﻿<?xml version="1.0" encoding="utf-8"?><DEFECTS><DEFECT>
+    <SFA>
+      <FILEPATH>c:\users\guill\onedrive\documentos\visual studio 2015\projects\sdl_p1\sdl_p1\</FILEPATH>
+      <FILENAME>sdl_p1.cpp</FILENAME>
+      <LINE>291</LINE>
+      <COLUMN>18</COLUMN>
+    </SFA>
+    <DEFECTCODE>6246</DEFECTCODE>
+    <DESCRIPTION>La declaración local de 'texPanel' oculta la declaración del mismo nombre en el ámbito externo. Información adicional: consulte la declaración anterior en la línea '117' de 'c:\users\guill\onedrive\documentos\visual studio 2015\projects\sdl_p1\sdl_p1\sdl_p1.cpp'.</DESCRIPTION>
+    <FUNCTION>SDL_main</FUNCTION>
+    <DECORATED>SDL_main</DECORATED>
+    <FUNCLINE>39</FUNCLINE>
+    <PATH>
+      <SFA>
+        <FILEPATH>c:\users\guill\onedrive\documentos\visual studio 2015\projects\sdl_p1\sdl_p1\</FILEPATH>
+        <FILENAME>sdl_p1.cpp</FILENAME>
+        <LINE>117</LINE>
+        <COLUMN>23</COLUMN>
+      </SFA>
+    </PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>c:\users\guill\onedrive\documentos\visual studio 2015\projects\sdl_p1\sdl_p1\</FILEPATH>
+      <FILENAME>sdl_p1.cpp</FILENAME>
+      <LINE>302</LINE>
+      <COLUMN>18</COLUMN>
+    </SFA>
+    <DEFECTCODE>6246</DEFECTCODE>
+    <DESCRIPTION>La declaración local de 'texPanel' oculta la declaración del mismo nombre en el ámbito externo. Información adicional: consulte la declaración anterior en la línea '117' de 'c:\users\guill\onedrive\documentos\visual studio 2015\projects\sdl_p1\sdl_p1\sdl_p1.cpp'.</DESCRIPTION>
+    <FUNCTION>SDL_main</FUNCTION>
+    <DECORATED>SDL_main</DECORATED>
+    <FUNCLINE>39</FUNCLINE>
+    <PATH>
+      <SFA>
+        <FILEPATH>c:\users\guill\onedrive\documentos\visual studio 2015\projects\sdl_p1\sdl_p1\</FILEPATH>
+        <FILENAME>sdl_p1.cpp</FILENAME>
+        <LINE>117</LINE>
+        <COLUMN>23</COLUMN>
+      </SFA>
+    </PATH>
+  </DEFECT></DEFECTS>

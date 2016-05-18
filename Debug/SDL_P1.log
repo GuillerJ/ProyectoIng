@@ -1,0 +1,4 @@
+﻿MSVCRT.lib(exe_main.obj) : error LNK2019: símbolo externo _main sin resolver al que se hace referencia en la función "int __cdecl __scrt_common_main_seh(void)" (?__scrt_common_main_seh@@YAHXZ)
+D:\SDL2\lib\SDL2main.lib : warning LNK4272: el tipo de máquina de biblioteca 'x64' está en conflicto con el tipo de máquina de destino 'X86'
+D:\SDL2\lib\SDL2.lib : warning LNK4272: el tipo de máquina de biblioteca 'x64' está en conflicto con el tipo de máquina de destino 'X86'
+C:\Users\guill\OneDrive\Documentos\Visual Studio 2015\Projects\SDL_P1\Debug\SDL_P1.exe : fatal error LNK1120: 1 externos sin resolver
