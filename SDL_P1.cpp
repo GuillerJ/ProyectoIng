@@ -7,7 +7,14 @@
 	   Archivos GUI movidos a la carpeta Recursos.
 * V1.4 Carga una imagen
 * V1.4.1	Cambiado el nombre a la variable vecesPintar
+* V2.0 Calibrado conforme al nuevo panel de la GUI. Eliminado la GUI de Windows. Mensajes de error cambiados. Añadido excepción si no encuentra ortopantomografia en su lugar.
+* V2.0.1	Aumento de tamaño de los botones cerrar y minimizar
+
+
+* TODO:
+* 
 */
+
 
 
 #include <iostream>
@@ -25,7 +32,7 @@ int main(int, char**) {
 	}
 
 	// crea la ventana
-	SDL_Window *win = SDL_CreateWindow("Odontologic V1.4.1", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 800, 600, SDL_WINDOW_SHOWN);
+	SDL_Window *win = SDL_CreateWindow("Odontologic V1.4.1", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 800, 600, SDL_WINDOW_BORDERLESS);
 	if (win == nullptr) {
 		std::cerr << "SDL_CreateWindow Error: " << SDL_GetError() << std::endl;
 		SDL_Quit();
@@ -41,12 +48,12 @@ int main(int, char**) {
 		return 1;
 	}
 
-	std::string imagePath1 = "Recursos/panel6.bmp";
+	std::string imagePath1 = "Recursos/panel8.bmp";
 
 	SDL_Surface *Panel = SDL_LoadBMP(imagePath1.c_str());
 	if (Panel == nullptr) {
 		cleanup(ren, win); // SDL_DestroyRenderer(ren); SDL_DestroyWindow(win);
-		std::cerr << "SDL_LoadBMP Error: " << SDL_GetError() << std::endl;
+		std::cerr << "SDL_LoadBMP del panel de la GUI Error: " << SDL_GetError() << std::endl;
 		SDL_Quit();
 		return 1;
 	}
@@ -54,7 +61,7 @@ int main(int, char**) {
 	SDL_Texture *texPanel = SDL_CreateTextureFromSurface(ren, Panel);
 	if (texPanel == nullptr) {
 		cleanup(ren, win); // SDL_DestroyRenderer(ren); SDL_DestroyWindow(win);
-		std::cerr << "SDL_CreateTextureFromSurface Error: " << SDL_GetError() << std::endl;
+		std::cerr << "SDL_CreateTextureFromSurface de la GUI Error: " << SDL_GetError() << std::endl;
 		SDL_Quit();
 		return 1;
 	}
@@ -103,7 +110,7 @@ int main(int, char**) {
 				std::cout << "Boton de raton pulsado en X = " << e.button.x << "\tY = " << e.button.y << std::endl;
 
 				//BOTON DE NUEVA IMAGEN
-				if ((e.button.x > 18 && e.button.x < 115) & (e.button.y >10 && e.button.y < 61)) {
+				if ((e.button.x > 22 && e.button.x < 48) & (e.button.y > 42 && e.button.y < 67)) {
 					//Preguntar por el nombre del archivo
 					//SDL_Window *win1 = SDL_CreateWindow("Nombre de la Imagen", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 300, 200, SDL_WINDOW_SHOWN);
 
@@ -113,22 +120,28 @@ int main(int, char**) {
 					
 					SrcR.x = 0;
 					SrcR.y = 0;
-					SrcR.w = 680;
+					SrcR.w = 780;
 					SrcR.h = 510;
 
-					DestR.x = 12;
-					DestR.y = 78;
-					DestR.w = 680;
+					DestR.x = 11;
+					DestR.y = 80;
+					DestR.w = 780;
 					DestR.h = 510;
 
 					SDL_Surface* Loading_Surf = SDL_LoadBMP("Ortopantomografia/OP1.bmp");
+					if (Loading_Surf == nullptr) {
+						cleanup(ren, win); // SDL_DestroyRenderer(ren); SDL_DestroyWindow(win);
+						std::cerr << "Error al cargar la Ortopantomografía. Codigo de Error: " << SDL_GetError() << std::endl;
+						SDL_Quit();
+						return 1;
+					}
 					Ortopantomografia = SDL_CreateTextureFromSurface(ren, Loading_Surf);
 					SDL_FreeSurface(Loading_Surf);
 					SDL_RenderCopy(ren, Ortopantomografia, &SrcR, &DestR);
 				}
 
 				//BOTON DE AYUDA
-				if ((e.button.x > 708 && e.button.x < 800) & (e.button.y > 540 && e.button.y < 600)) {
+				if ((e.button.x > 748 && e.button.x < 775) & (e.button.y > 43 && e.button.y < 70)) {
 					//Modificar la imagen de ayuda y meter con ella la otropan si se encuntra abiera
 					if (ayuda == false) {
 						ayuda = true;
@@ -142,20 +155,22 @@ int main(int, char**) {
 						SDL_RenderPresent(ren);
 					}
 				}
-
+				
 				//BOTON DE CERRAR
-				if ((e.button.x > 708 && e.button.x < 800) & (e.button.y > 0 && e.button.y < 55)) {
-					//SDL_MinimizeWindow(win
+				if ((e.button.x > 777 && e.button.x < 800) & (e.button.y > 0 && e.button.y < 24)) {
 					quit = true;
 				}
-
+				//BOTON DE MINIMIZAR
+				if ((e.button.x > 750 && e.button.x < 777) & (e.button.y > 0 && e.button.y < 24)) {
+					SDL_MinimizeWindow(win);
+				}
 				//BOTON CREAR LINEA
-				if ((e.button.x > 708 && e.button.x < 800) & (e.button.y > 115 && e.button.y < 168)) {
+				if ((e.button.x > 109 && e.button.x < 234) & (e.button.y > 46 && e.button.y < 67)) {
 					SDL_Rect rect1;
-					rect1.x = 773;
-					rect1.y = 190;
-					rect1.w = 10;
-					rect1.h = 10;
+					rect1.x = 212;
+					rect1.y = 51;
+					rect1.w = 9;
+					rect1.h = 9;
 
 					if (pinta == false) {
 						pinta = true;
@@ -170,7 +185,7 @@ int main(int, char**) {
 				}
 
 				//Panel Para pintar lineas
-				if ((pinta == true) & (e.button.x > 12 && e.button.x < 692) & (e.button.y > 77 && e.button.y < 588)) {
+				if ((pinta == true) & (e.button.x > 10 && e.button.x < 790) & (e.button.y > 80 && e.button.y < 590)) {
 					
 					if (vecesPintar == 0) {
 						std::cout << " 1 ";
