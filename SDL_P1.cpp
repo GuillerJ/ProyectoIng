@@ -9,7 +9,10 @@
 * V1.4.1	Cambiado el nombre a la variable vecesPintar
 * V2.0 Calibrado conforme al nuevo panel de la GUI. Eliminado la GUI de Windows. Mensajes de error cambiados. Añadido excepción si no encuentra ortopantomografia en su lugar.
 * V2.0.1	Aumento de tamaño de los botones cerrar y minimizar
-
+* V2.1 Bool para imagen vista para que la ayuda sepa si hay o no imagen cargada. Boton de mentionano cogido. Añadido un icono a la aplicación
+* V2.2 Ahora si esta activado el boton mentoniano el mandibular se apaga y viceversa. La función de mandibular solo deja pintar 2 lineas y se desactiva
+* V2.2.1	Si la imagen no está cargada no deja pintar
+* v2.3 Incluida la función de mentoniano ya pinta un cruceta para señalarlo
 
 * TODO:
 * 
@@ -48,7 +51,19 @@ int main(int, char**) {
 		return 1;
 	}
 
-	std::string imagePath1 = "Recursos/panel8.bmp";
+	//Cargar el icono
+	std::string PathIcono = "Recursos/MiO4.bmp";
+	SDL_Surface *Icono = SDL_LoadBMP(PathIcono.c_str());
+	if (Icono == nullptr) {
+		cleanup(ren, win); // SDL_DestroyRenderer(ren); SDL_DestroyWindow(win);
+		std::cerr << "SDL_LoadBMP del Icono de la aplicacion. Error: " << SDL_GetError() << std::endl;
+		SDL_Quit();
+		return 1;
+	}
+	SDL_SetWindowIcon(win, Icono);
+
+
+	std::string imagePath1 = "Recursos/panel9.bmp";
 
 	SDL_Surface *Panel = SDL_LoadBMP(imagePath1.c_str());
 	if (Panel == nullptr) {
@@ -78,14 +93,41 @@ int main(int, char**) {
 	//*****************Variables***********************
 	bool quit = false;
 	register int vecesPintar = 0;
-	bool pinta = false;
+	bool imagenOn = false;
+	bool cMand = false;
+	int vecesMand = 0;
+	bool mentoniano = false;
 	bool ayuda = false;
-	std::string PathAyuda = "Recursos/panel1.bmp";
+	std::string PathAyuda = "Recursos/ayuda2.bmp";
 	SDL_Surface *Ayuda = SDL_LoadBMP(PathAyuda.c_str());
 	int x1 = 0;
 	int y1 = 0;
 	int x2 = 0;
 	int y2 = 0;
+	SDL_Texture* Ortopantomografia;
+
+	SDL_Rect SrcR;
+	SDL_Rect DestR;
+	SrcR.x = 0;
+	SrcR.y = 0;
+	SrcR.w = 780;
+	SrcR.h = 510;
+	DestR.x = 11;
+	DestR.y = 80;
+	DestR.w = 780;
+	DestR.h = 510;
+
+	SDL_Rect rectMento;
+	rectMento.x = 355;
+	rectMento.y = 51;
+	rectMento.w = 9;
+	rectMento.h = 9;
+	
+	SDL_Rect rectMand;
+	rectMand.x = 212;
+	rectMand.y = 51;
+	rectMand.w = 9;
+	rectMand.h = 9;
 	//*****************Variables END*******************
 
 	while (!quit) {
@@ -112,25 +154,19 @@ int main(int, char**) {
 				//BOTON DE NUEVA IMAGEN
 				if ((e.button.x > 22 && e.button.x < 48) & (e.button.y > 42 && e.button.y < 67)) {
 					//Preguntar por el nombre del archivo
-					//SDL_Window *win1 = SDL_CreateWindow("Nombre de la Imagen", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 300, 200, SDL_WINDOW_SHOWN);
+					SDL_Window *winPregunta = SDL_CreateWindow("Nombre de la Imagen", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 300, 200, SDL_WINDOW_SHOWN);
+					std::string PathPregunta = "Recursos/pregunta1.bmp";
+					SDL_Surface *Pregunta = SDL_LoadBMP(PathPregunta.c_str());
+					SDL_Renderer *renPregunta = SDL_CreateRenderer(winPregunta, -1, 1);
+					SDL_Texture *texPregunta = SDL_CreateTextureFromSurface(renPregunta, Pregunta);
+					SDL_RenderCopy(renPregunta, texPregunta, NULL, NULL);
+					SDL_RenderPresent(renPregunta);
 
-					SDL_Texture* Ortopantomografia;
-					SDL_Rect SrcR;
-					SDL_Rect DestR;
-					
-					SrcR.x = 0;
-					SrcR.y = 0;
-					SrcR.w = 780;
-					SrcR.h = 510;
-
-					DestR.x = 11;
-					DestR.y = 80;
-					DestR.w = 780;
-					DestR.h = 510;
+					imagenOn = true;
 
 					SDL_Surface* Loading_Surf = SDL_LoadBMP("Ortopantomografia/OP1.bmp");
 					if (Loading_Surf == nullptr) {
-						cleanup(ren, win); // SDL_DestroyRenderer(ren); SDL_DestroyWindow(win);
+						cleanup(ren, win);
 						std::cerr << "Error al cargar la Ortopantomografía. Codigo de Error: " << SDL_GetError() << std::endl;
 						SDL_Quit();
 						return 1;
@@ -142,7 +178,7 @@ int main(int, char**) {
 
 				//BOTON DE AYUDA
 				if ((e.button.x > 748 && e.button.x < 775) & (e.button.y > 43 && e.button.y < 70)) {
-					//Modificar la imagen de ayuda y meter con ella la otropan si se encuntra abiera
+					//Si hay ortopan que la cargue pero donde diga el usuario
 					if (ayuda == false) {
 						ayuda = true;
 						SDL_Texture *texPanel = SDL_CreateTextureFromSurface(ren, Ayuda);
@@ -150,9 +186,20 @@ int main(int, char**) {
 						SDL_RenderPresent(ren);
 					}else {
 						ayuda = false;
-						SDL_Texture *texPanel = SDL_CreateTextureFromSurface(ren, Panel);
-						SDL_RenderCopy(ren, texPanel, NULL, NULL);
-						SDL_RenderPresent(ren);
+						if (imagenOn == false) {
+							SDL_Texture *texPanel = SDL_CreateTextureFromSurface(ren, Panel);
+							SDL_RenderCopy(ren, texPanel, NULL, NULL);
+							SDL_RenderPresent(ren);
+						}
+						else {
+							SDL_Texture *texPanel = SDL_CreateTextureFromSurface(ren, Panel);
+							SDL_RenderCopy(ren, texPanel, NULL, NULL);
+							SDL_RenderPresent(ren);
+							SDL_Surface* Loading_Surf = SDL_LoadBMP("Ortopantomografia/OP1.bmp");
+							Ortopantomografia = SDL_CreateTextureFromSurface(ren, Loading_Surf);
+							SDL_FreeSurface(Loading_Surf);
+							SDL_RenderCopy(ren, Ortopantomografia, &SrcR, &DestR);
+						}
 					}
 				}
 				
@@ -164,44 +211,75 @@ int main(int, char**) {
 				if ((e.button.x > 750 && e.button.x < 777) & (e.button.y > 0 && e.button.y < 24)) {
 					SDL_MinimizeWindow(win);
 				}
-				//BOTON CREAR LINEA
-				if ((e.button.x > 109 && e.button.x < 234) & (e.button.y > 46 && e.button.y < 67)) {
-					SDL_Rect rect1;
-					rect1.x = 212;
-					rect1.y = 51;
-					rect1.w = 9;
-					rect1.h = 9;
-
-					if (pinta == false) {
-						pinta = true;
+				//BOTON Mentoniano
+				if ((imagenOn == true) & (e.button.x > 249 && e.button.x < 371) & (e.button.y > 46 && e.button.y < 67)) {
+					cMand = false;
+					SDL_SetRenderDrawColor(ren, 255, 0, 0, 255);
+					SDL_RenderFillRect(ren, &rectMand);
+					
+					if (mentoniano == false) {
+						mentoniano = true;
 						SDL_SetRenderDrawColor(ren, 0, 255, 0, 255);
-						SDL_RenderFillRect(ren, &rect1);
+						SDL_RenderFillRect(ren, &rectMento);
+						SDL_SetRenderDrawColor(ren, 255, 0, 0, 255);
+					}
+					else {
+						SDL_SetRenderDrawColor(ren, 255, 0, 0, 255);
+						SDL_RenderFillRect(ren, &rectMento);
+						mentoniano = false;
+					}
+				}
+				//BOTON C.Mandibular
+				if ((imagenOn == true) & (e.button.x > 109 && e.button.x < 234) & (e.button.y > 46 && e.button.y < 67)) {
+					mentoniano = false;
+					SDL_SetRenderDrawColor(ren, 255, 0, 0, 255);
+					SDL_RenderFillRect(ren, &rectMento);
+
+					if (cMand == false) {
+						cMand = true;
+						SDL_SetRenderDrawColor(ren, 0, 255, 0, 255);
+						SDL_RenderFillRect(ren, &rectMand);
 						SDL_SetRenderDrawColor(ren, 255, 0, 0, 255);
 					}else {
 						SDL_SetRenderDrawColor(ren, 255, 0, 0, 255);
-						SDL_RenderFillRect(ren, &rect1);
-						pinta = false;
+						SDL_RenderFillRect(ren, &rectMand);
+						cMand = false;
 					}
 				}
 
 				//Panel Para pintar lineas
-				if ((pinta == true) & (e.button.x > 10 && e.button.x < 790) & (e.button.y > 80 && e.button.y < 590)) {
-					
-					if (vecesPintar == 0) {
-						std::cout << " 1 ";
+				if (((cMand == true) || (mentoniano == true)) & (e.button.x > 10 && e.button.x < 790) & (e.button.y > 80 && e.button.y < 590)) {
+					//poner OR en el mentoniano y cmand para luego sacar las rectas en esta misma función
+
+					if (cMand == true){
+						if (vecesPintar == 0) {
+							std::cout << " 1 ";
+							x1 = e.button.x;
+							y1 = e.button.y;
+						}
+						if (vecesPintar == 1) {
+							std::cout << " 2 ";
+							x2 = e.button.x;
+							y2 = e.button.y;
+							SDL_RenderDrawLine(ren, x1, y1, x2, y2);
+						}
+						vecesPintar++;
+						vecesMand++;
+						if (vecesPintar == 2)
+							vecesPintar = 0;
+						if (vecesMand == 4) {
+							cMand = false;
+							SDL_SetRenderDrawColor(ren, 255, 0, 0, 255);
+							SDL_RenderFillRect(ren, &rectMand);
+						}
+					}
+					if (mentoniano == true) {
 						x1 = e.button.x;
 						y1 = e.button.y;
-					}
-					if (vecesPintar == 1) {
-						std::cout << " 2 ";
-						x2 = e.button.x;
-						y2 = e.button.y;
-						SDL_RenderDrawLine(ren, x1, y1, x2, y2);
-					}
-					vecesPintar++;
-					if (vecesPintar == 2)
-						vecesPintar = 0;
+						SDL_RenderDrawLine(ren, x1, y1 + 200, x1, y1 - 200);
+						SDL_RenderDrawLine(ren, x1 + 200, y1, x1 - 200, y1);
 
+					}
 				}
 			}
 		}
