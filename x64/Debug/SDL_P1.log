@@ -1,2 +1,10 @@
 ﻿  SDL_P1.cpp
+c:\users\guill\onedrive\documentos\visual studio 2015\projects\sdl_p1\sdl_p1\sdl_p1.cpp(294): warning C4838: la conversión de 'int' en 'float' requiere una conversión de restricción
+c:\users\guill\onedrive\documentos\visual studio 2015\projects\sdl_p1\sdl_p1\sdl_p1.cpp(294): warning C4244: 'inicializando': conversión de 'int' a 'float'; posible pérdida de datos
+c:\users\guill\onedrive\documentos\visual studio 2015\projects\sdl_p1\sdl_p1\sdl_p1.cpp(297): warning C4244: '=': conversión de 'double' a 'float'; posible pérdida de datos
+c:\users\guill\onedrive\documentos\visual studio 2015\projects\sdl_p1\sdl_p1\sdl_p1.cpp(298): warning C4244: '=': conversión de 'double' a 'float'; posible pérdida de datos
+c:\users\guill\onedrive\documentos\visual studio 2015\projects\sdl_p1\sdl_p1\sdl_p1.cpp(301): warning C4838: la conversión de 'int' en 'float' requiere una conversión de restricción
+c:\users\guill\onedrive\documentos\visual studio 2015\projects\sdl_p1\sdl_p1\sdl_p1.cpp(301): warning C4244: 'inicializando': conversión de 'int' a 'float'; posible pérdida de datos
+c:\users\guill\onedrive\documentos\visual studio 2015\projects\sdl_p1\sdl_p1\sdl_p1.cpp(303): warning C4244: '=': conversión de 'float' a 'int'; posible pérdida de datos
+c:\users\guill\onedrive\documentos\visual studio 2015\projects\sdl_p1\sdl_p1\sdl_p1.cpp(304): warning C4244: '=': conversión de 'float' a 'int'; posible pérdida de datos
   SDL_P1.vcxproj -> C:\Users\guill\OneDrive\documentos\visual studio 2015\Projects\SDL_P1\x64\Debug\SDL_P1.exe
